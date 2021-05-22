@@ -15,9 +15,24 @@ type Model struct {
 //Models slice of model
 type Models []*Model
 type Storage interface {
-	Create(*Model) error
+	Migrate() error
+
+	/* Create(*Model) error
 	Update(*Model) error
 	GetAll() (Models, error)
 	GetByID(uint) (*Model, error)
-	Delete(uint) error
+	Delete(uint) error */
+}
+
+//Servicio de producto
+type Service struct {
+	storage Storage
+}
+
+//Nuevo servicio
+func NewService(s Storage) *Service {
+	return &Service{s}
+}
+func (s *Service) Migrate() error {
+	return s.storage.Migrate()
 }

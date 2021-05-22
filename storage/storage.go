@@ -21,7 +21,7 @@ func NewPostgresDB() {
 		// El primer argumento de Open es el nombre del driver ("postgres")
 		// y el segundo argumento es la cadena de conexión, donde se coloca
 		// las credenciales de acceso a la BD
-		db, err = sql.Open("postgres", "postgres://edteam:edteam@localhost:7530/godb?sslmode=disable")
+		db, err = sql.Open("postgres", "postgres://sergio:7752930ni@localhost:5432/godb?sslmode=disable")
 		if err != nil {
 			log.Fatalf("can't open db: %v", err)
 		}
