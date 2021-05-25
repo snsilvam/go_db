@@ -1,8 +1,13 @@
 package product
 
 import (
+	"errors"
 	"fmt"
 	"time"
+)
+
+var (
+	ErrIDNotFound = errors.New("No se encontro producto ingresado")
 )
 
 //Model of product
@@ -27,10 +32,10 @@ type Models []*Model
 type Storage interface {
 	Migrate() error
 	Create(*Model) error
-	// Update(*Model) error
+	Update(*Model) error
 	GetAll() (Models, error)
 	GetByID(uint) (*Model, error)
-	// Delete(uint) error
+	Delete(uint) error
 }
 
 //Servicio de producto
@@ -62,4 +67,19 @@ func (s *Service) GetAll() (Models, error) {
 //Consulta por id
 func (s *Service) GetByID(id uint) (*Model, error) {
 	return s.storage.GetByID(id)
+}
+
+//Actualizar un producto de la db
+func (s *Service) Update(m *Model) error {
+	if m.ID == 0 {
+		return ErrIDNotFound
+	}
+	m.UpdatedAt = time.Now()
+
+	return s.storage.Update(m)
+}
+
+//Eliminar un producto
+func (s *Service) Delete(id uint) error {
+	return s.storage.Delete(id)
 }

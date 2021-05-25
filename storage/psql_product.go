@@ -28,6 +28,11 @@ const (
 	psqlGetAllProduct = `SELECT id, name, obvervaciones, price, create_at, update_at FROM products`
 	//Consulta de fila por id
 	psqlGetProductByID = psqlGetAllProduct + " WHERE id = $1"
+	//Actualizar producto
+	psqlUpdateProduct = `UPDATE products SET name = $1, obvervaciones = $2, 
+	price = $3, update_at = $4 WHERE id = $5`
+	//Eliminar un producto
+	psqlDeleteProduct = `DELETE FROM products WHERE id = $1`
 )
 
 //PsqlProduct se usa para trabajar con postgre en producto
@@ -112,6 +117,8 @@ func (p *PsqlProduct) GetByID(id uint) (*product.Model, error) {
 	return scanRowProduct(stmt.QueryRow(id))
 
 }
+
+//Consultar producto por fila
 func scanRowProduct(s scanner) (*product.Model, error) {
 	m := &product.Model{}
 	observationNull := sql.NullString{}
@@ -133,4 +140,50 @@ func scanRowProduct(s scanner) (*product.Model, error) {
 	m.UpdatedAt = updatedAtNull.Time
 
 	return m, nil
+}
+
+//Actualizar producto
+func (p *PsqlProduct) Update(m *product.Model) error {
+	stmt, err := p.db.Prepare(psqlUpdateProduct)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	res, err := stmt.Exec(
+		m.Name,
+		stringToNull(m.Observations),
+		m.Price,
+		timeToNull(m.UpdatedAt),
+		m.ID,
+	)
+	if err != nil {
+		return err
+	}
+	//Controlar cuando un id no existe
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("No se encontro id ingresado: %d", m.ID)
+	}
+	fmt.Println("Actualizanción exitosa !")
+	return nil
+}
+
+//Eliminar un producto
+func (p *PsqlProduct) Delete(id uint) error {
+	stmt, err := p.db.Prepare(psqlDeleteProduct)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	fmt.Println("Producto eliminado")
+	return nil
+
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/snsilvam/go_db/pkg/product"
@@ -44,11 +43,34 @@ func main() {
 	// }
 	// fmt.Println(ms)
 	//**Consultar un producto por id
+	// storageProduct := storage.NewPsqlProduct(storage.Pool())
+	// serviceProduct := product.NewService(storageProduct)
+	// m, err := serviceProduct.GetByID(3)
+	// if err != nil {
+	// 	log.Fatalf("product.GetByID: %v", err)
+	// }
+	// fmt.Println(m)
+	//********Actualizar un producto de la tabla
+	// storageProduct := storage.NewPsqlProduct(storage.Pool())
+	// serviceProduct := product.NewService(storageProduct)
+
+	// m := &product.Model{
+	// 	ID:           2,
+	// 	Name:         "Rogue",
+	// 	Observations: "Shadow",
+	// 	Price:        50000,
+	// }
+	// err := serviceProduct.Update(m)
+	// if err != nil {
+	// 	log.Fatalf("Clase.update: %v", err)
+	// }
 	storageProduct := storage.NewPsqlProduct(storage.Pool())
 	serviceProduct := product.NewService(storageProduct)
-	m, err := serviceProduct.GetByID(3)
+
+	err := serviceProduct.Delete(1)
 	if err != nil {
-		log.Fatalf("product.GetByID: %v", err)
+		log.Fatalf("product.Delete: %v", err)
 	}
-	fmt.Println(m)
 }
+
+//****NUNCA ELIMINAR*****mi tio es lindo y es muy responsable 😁
