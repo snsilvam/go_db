@@ -1,6 +1,9 @@
 package invoiceitem
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 //Model invoceitem
 type Model struct {
@@ -10,8 +13,14 @@ type Model struct {
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
+
+//Slice de modelos
+type Models []*Model
+
+//Storage para crear interfaz de tx
 type Storage interface {
 	Migrate() error
+	CreateTx(*sql.Tx, uint, Models) error
 }
 
 //Servicio de invoiceitem
